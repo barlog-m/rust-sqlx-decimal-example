@@ -3,14 +3,14 @@ use sqlx::PgPool;
 use rust_decimal::Decimal;
 use rust_decimal_macros::dec;
 
-pub type AppError = Box<dyn std::error::Error + Send + Sync + 'static>;
-pub type AppResult<T> = Result<T, AppError>;
+type AppError = Box<dyn std::error::Error + Send + Sync + 'static>;
+type AppResult<T> = Result<T, AppError>;
 
 #[derive(Debug)]
-pub struct Item {
-    pub id: i64,
-    pub name: String,
-    pub price: Decimal,
+struct Item {
+    id: i64,
+    name: String,
+    price: Decimal,
 }
 
 #[tokio::main]
@@ -34,7 +34,7 @@ async fn main() -> AppResult<()> {
     Ok(())
 }
 
-pub async fn add(pool: &PgPool, i: Item) -> AppResult<Item> {
+async fn add(pool: &PgPool, i: Item) -> AppResult<Item> {
     let si = sqlx::query_as!(
         Item,
         r#"
@@ -51,7 +51,7 @@ pub async fn add(pool: &PgPool, i: Item) -> AppResult<Item> {
     Ok(si)
 }
 
-pub async fn get(pool: &PgPool, id: i64) -> AppResult<Item> {
+async fn get(pool: &PgPool, id: i64) -> AppResult<Item> {
     let i = sqlx::query_as!(
         Item,
         r#"
@@ -67,7 +67,7 @@ pub async fn get(pool: &PgPool, id: i64) -> AppResult<Item> {
     Ok(i)
 }
 
-pub fn tracer_init() {
+fn tracer_init() {
     env::set_var(
         "RUST_LOG",
         "sqlx=debug,tokio=trace,debug",
